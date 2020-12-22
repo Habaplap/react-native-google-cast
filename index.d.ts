@@ -28,7 +28,19 @@ declare module 'react-native-google-cast' {
     isLive?: boolean
     customData?: any
     textTrackStyle?: TextTrackStyle
+    mediaTracks?: MediaTrack[];
   }
+
+  export type MediaTrack = {
+    id: number,
+    type: number,
+    name?: string,
+    subtype?: number,
+    contentId: string,
+    contentType?: string;
+    language: string,
+  }
+  
 
   export type TextTrackStyle = {
     backgroundColor?: string

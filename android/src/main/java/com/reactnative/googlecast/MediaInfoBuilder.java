@@ -177,8 +177,6 @@ public class MediaInfoBuilder {
             tracks.add(trackBuilder.build());
         }
 
-        Log.e(REACT_CLASS, " tracks " + tracks);
-
         return tracks;
     }
 

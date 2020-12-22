@@ -211,6 +211,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
   NSString *imageUrl = [RCTConvert NSString:params[@"imageUrl"]];
   NSString *posterUrl = [RCTConvert NSString:params[@"posterUrl"]];
   NSString *contentType = [RCTConvert NSString:params[@"contentType"]];
+  NSArray *mediaTracks = [RCTConvert NSArray:params[@"mediaTracks"]];
   NSDictionary *customData = [RCTConvert NSDictionary:params[@"customData"]];
   double streamDuration = [RCTConvert double:params[@"streamDuration"]];
   double playPosition = [RCTConvert double:params[@"playPosition"]];
@@ -219,7 +220,38 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
 
   GCKMediaMetadata *metadata =
       [[GCKMediaMetadata alloc] initWithMetadataType:GCKMediaMetadataTypeMovie];
+  NSMutableArray *tracksArray = nil;
+  if (mediaTracks) {
+    tracksArray = [[NSMutableArray alloc] init];
+    for (id mediaTrack in mediaTracks) {
+      NSString *mediaTrackName = [mediaTrack valueForKey: @"name"];
+      NSString *mediaTrackContentId = [mediaTrack valueForKey: @"contentId"];
+      NSString *mediaTrackLanguage = [mediaTrack valueForKey: @"language"];
+      NSString *mediaTrackContentType = [mediaTrack valueForKey: @"contentType"];
+      int *mediaTrackType = [[mediaTrack valueForKey: @"type"] intValue];
+      int *mediaTrackSubtype = [[mediaTrack valueForKey: @"subtype"] intValue];
+      int *mediaTrackId = [[mediaTrack valueForKey: @"id"] intValue];
+      
+      if (!mediaTrackSubtype) {
+        mediaTrackSubtype = nil;
+      }
 
+      if (!mediaTrackContentType) {
+        mediaTrackContentType = @"audio/mp3";
+      }
+
+      GCKMediaTrack *captionsTrack =
+      [[GCKMediaTrack alloc] initWithIdentifier:mediaTrackId
+                              contentIdentifier:mediaTrackContentId
+                                    contentType:mediaTrackContentType
+                                           type:mediaTrackType
+                                    textSubtype:mediaTrackSubtype
+                                           name:mediaTrackName
+                                   languageCode:mediaTrackLanguage
+                                     customData:nil];
+      [tracksArray addObject: captionsTrack];
+    }
+  }
   if (title) {
     [metadata setString:title forKey:kGCKMetadataKeyTitle];
   }
@@ -251,7 +283,7 @@ RCT_EXPORT_METHOD(castMedia: (NSDictionary *)params
                                          contentType:contentType
                                             metadata:metadata
                                       streamDuration:streamDuration
-                                         mediaTracks:nil
+                                         mediaTracks:tracksArray
                                       textTrackStyle:nil
                                           customData:customData];
   // Cast the video.

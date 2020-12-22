@@ -73,10 +73,11 @@ export default {
     textTrackStyle?: TextTrackStyle,
     mediaTracks?: {
       id: number,
-      type: string,
-      name: string,
-      subtype?: string,
+      type: number,
+      name?: string,
+      subtype?: number,
       contentId: string,
+      contentType?: string,
       language: string,
     }[]
   }) {
