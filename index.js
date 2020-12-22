@@ -71,6 +71,14 @@ export default {
     isLive?: boolean,
     customData?: Object,
     textTrackStyle?: TextTrackStyle,
+    mediaTracks?: {
+      id: number,
+      type: string,
+      name: string,
+      subtype?: string,
+      contentId: string,
+      language: string,
+    }[]
   }) {
     return GoogleCast.castMedia(params)
   },
@@ -155,4 +163,17 @@ export default {
   CHANNEL_CONNECTED: GoogleCast.CHANNEL_CONNECTED,
   CHANNEL_DISCONNECTED: GoogleCast.CHANNEL_DISCONNECTED,
   CHANNEL_MESSAGE_RECEIVED: GoogleCast.CHANNEL_MESSAGE_RECEIVED,
+
+  TYPE_UNKNOWN: 0,
+  TYPE_TEXT: 1,
+  TYPE_AUDIO: 2,
+  TYPE_VIDEO: 3,
+
+  SUBTYPE_UNKNOWN: -1,
+  SUBTYPE_NONE: 0,
+  SUBTYPE_SUBTITLES: 1,
+  SUBTYPE_CAPTIONS: 2,
+  SUBTYPE_DESCRIPTIONS: 3,
+  SUBTYPE_CHAPTERS: 4,
+  SUBTYPE_METADATA: 5,
 }

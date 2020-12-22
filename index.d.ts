@@ -87,6 +87,19 @@ declare module 'react-native-google-cast' {
     CHANNEL_CONNECTED: string
     CHANNEL_DISCONNECTED: string
     CHANNEL_MESSAGE_RECEIVED: string
+
+    TYPE_AUDIO: int
+    TYPE_TEXT: int
+    TYPE_UNKNOWN: int
+    TYPE_VIDEO: int
+
+    SUBTYPE_CAPTIONS: int
+    SUBTYPE_CHAPTERS: int
+    SUBTYPE_DESCRIPTIONS: int
+    SUBTYPE_METADATA: int
+    SUBTYPE_NONE: int
+    SUBTYPE_SUBTITLES: int
+    SUBTYPE_UNKNOWN: int
   }
 
   export default GoogleCast

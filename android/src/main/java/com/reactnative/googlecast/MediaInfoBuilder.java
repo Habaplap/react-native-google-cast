@@ -1,11 +1,15 @@
 package com.reactnative.googlecast;
 
 import android.net.Uri;
+import android.util.Log;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.cast.TextTrackStyle;
 import com.google.android.gms.common.images.WebImage;
 
@@ -15,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MediaInfoBuilder {
+    public static final String REACT_CLASS = "RNGoogleCastMediaInfoBuilder";
+
     private static final String DEFAULT_CONTENT_TYPE = "video/mp4";
 
     private static final Map<String, Integer> NAME_TO_EDGE_TYPE_MAP =
@@ -107,6 +113,12 @@ public class MediaInfoBuilder {
         String contentType = ReadableMapUtils.getString(parameters, "contentType");
         builder = builder.setContentType(contentType != null ? contentType : DEFAULT_CONTENT_TYPE);
 
+        ReadableArray mediaTracks = ReadableMapUtils.getArray(parameters, "mediaTracks");
+        if (mediaTracks != null) {
+            ArrayList tracks = buildMediaTracks(mediaTracks);
+            builder.setMediaTracks(tracks);
+        }
+
         Map<?, ?> customData = ReadableMapUtils.getMap(parameters, "customData");
         if (customData != null) {
             builder = builder.setCustomData(new JSONObject(customData));
@@ -123,6 +135,51 @@ public class MediaInfoBuilder {
         }
 
         return builder.build();
+    }
+
+    private static ArrayList buildMediaTracks(ReadableArray tracksData) {
+        ArrayList tracks = new ArrayList();
+        for (int index = 0; index < tracksData.size(); index += 1) {
+            ReadableMap trackData = tracksData.getMap(index);
+            Integer mediaTrackId = ReadableMapUtils.getInt(trackData, "id");
+            if (mediaTrackId == null) {
+                throw new IllegalArgumentException("media track id is required for mediatrack initialization");
+            }
+
+            Integer mediaTrackType = ReadableMapUtils.getInt(trackData, "type");
+            if (mediaTrackType == null) {
+                throw new IllegalArgumentException("media track type is required for mediatrack initialization");
+            }
+
+            MediaTrack.Builder trackBuilder = new MediaTrack.Builder(mediaTrackId, mediaTrackType);
+
+            String mediaTrackName = ReadableMapUtils.getString(trackData, "name");
+            if (mediaTrackName != null) {
+                trackBuilder.setName(mediaTrackName);
+            }
+
+            String mediaTrackLanguage = ReadableMapUtils.getString(trackData, "language");
+            if (mediaTrackLanguage != null) {
+                trackBuilder.setLanguage(mediaTrackLanguage);
+            }
+
+            Integer mediaTrackSubtype = ReadableMapUtils.getInt(trackData, "subtype");
+            if (mediaTrackSubtype != null) {
+                trackBuilder.setSubtype(mediaTrackSubtype);
+            }
+
+            String mediaTrackContentId = ReadableMapUtils.getString(trackData, "contentId");
+            if (mediaTrackContentId == null) {
+                throw new IllegalArgumentException("media track contentId (source Url) is required for mediatrack initialization");
+            }
+            trackBuilder.setContentId(mediaTrackContentId);
+            
+            tracks.add(trackBuilder.build());
+        }
+
+        Log.e(REACT_CLASS, " tracks " + tracks);
+
+        return tracks;
     }
 
     private static TextTrackStyle buildTextTrackStyle(ReadableMap params) {
