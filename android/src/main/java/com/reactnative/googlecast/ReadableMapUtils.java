@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableArray;
 
 import java.util.Map;
 
@@ -48,6 +49,14 @@ public class ReadableMapUtils {
         }
 
         return map.getDouble(key);
+    }
+
+    public static @Nullable ReadableArray getArray(@NonNull ReadableMap map, @NonNull String key) {
+        if (!map.hasKey(key)) {
+            return null;
+        }
+
+        return map.getArray(key);
     }
 
     public static @Nullable Float getFloat(@NonNull ReadableMap map, @NonNull String key) {
